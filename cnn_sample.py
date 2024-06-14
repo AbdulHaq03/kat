@@ -58,7 +58,6 @@ def main(args):
             p.map(sampling_slide, sampling_list)
 
     list_path = get_data_list_path(args)
-    print('List path: ', get_data_list_path(args))
   
     dataset_split_path = os.path.join(list_path, 'split.pkl')
     if not os.path.exists(dataset_split_path):
@@ -80,15 +79,10 @@ def main(args):
 
 
 def sampling_slide(slide_info):
-    print('sampling_slide (slide_info): ', slide_info[0])
     slide_guid, slide_rpath, slide_label = slide_info[0]
     args = slide_info[1]
 
-    print('Arguments: ', args)
-
     time_file_path = os.path.join(args.dataset_path, slide_guid, 'info.txt')
-
-    print('Time file path: ', time_file_path)
   
     if os.path.exists(time_file_path):
         print(slide_guid, 'is already sampled. skip.')
@@ -97,13 +91,11 @@ def sampling_slide(slide_info):
     slide_path = os.path.join(args.slide_dir, slide_rpath)
     image_dir = os.path.join(slide_path, scales[args.level])
 
-    print('slide_path: ', slide_path)
-
     print('Image directory: ', image_dir)
 
     tissue_mask = get_tissue_mask(cv2.imread(
                 os.path.join(slide_path, 'Overview.jpg')))
-    
+  
     content_mat = cv2.blur(tissue_mask, ksize=args.filter_size, anchor=(0, 0))
     content_mat = content_mat[::args.srstep, ::args.srstep]
     
