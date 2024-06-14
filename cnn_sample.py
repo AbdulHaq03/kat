@@ -39,12 +39,15 @@ def main(args):
     slide_list = slide_data['train'] + slide_data['test']
 
     args.dataset_path = get_sampling_path(args)
-    print('slide num', len(slide_list))
+    print('Total slides: ', len(slide_list))
 
     # Add print statement here
-    print(f"Sampling list: {slide_list}")
+    print(f"List of samples: {slide_list}")
 
     sampling_list = [(i, args) for i in slide_list]
+
+    print('The sampling list: ', sampling_list)
+  
     if args.num_workers < 2:
         # sampling the data using single thread
         for s in slide_list:
@@ -55,7 +58,8 @@ def main(args):
             p.map(sampling_slide, sampling_list)
 
     list_path = get_data_list_path(args)
-    print(get_data_list_path(args))
+    print('List path: ', get_data_list_path(args))
+  
     dataset_split_path = os.path.join(list_path, 'split.pkl')
     if not os.path.exists(dataset_split_path):
         train_list = slide_data['train'] 
@@ -76,16 +80,26 @@ def main(args):
 
 
 def sampling_slide(slide_info):
+    print('sampling_slide (slide_info): ', slide_info[0])
     slide_guid, slide_rpath, slide_label = slide_info[0]
     args = slide_info[1]
 
+    print('Arguments: ', args)
+
     time_file_path = os.path.join(args.dataset_path, slide_guid, 'info.txt')
+
+    print('Time file path: ', time_file_path)
+  
     if os.path.exists(time_file_path):
         print(slide_guid, 'is already sampled. skip.')
         return 0
 
     slide_path = os.path.join(args.slide_dir, slide_rpath)
     image_dir = os.path.join(slide_path, scales[args.level])
+
+    print('slide_path: ', slide_path)
+
+    print('Image directory: ', image_dir)
 
     tissue_mask = get_tissue_mask(cv2.imread(
                 os.path.join(slide_path, 'Overview.jpg')))
